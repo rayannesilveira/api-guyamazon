@@ -1,0 +1,307 @@
+{
+  "openapi": "3.0.0",
+  "info":{
+    "title": "Documentação API Valorant",
+    "description": "Essa é a API para o aplicativo Pixels Valorant, desenvolvido por Rayanne Silveira.",
+    "version":"1.0.0"
+  },
+  "components":{
+    "securitySchemes":{
+      "bearerAuth":{
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths":{
+    "/user":{
+      "post":{
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create User",
+        "description": "Essa é uma descrição do método POST.",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+                "type": "object",
+                "properties":{
+                  "name":{
+                    "type": "string"
+                  },
+                  "email":{
+                    "type": "string"
+                  },
+                  "password":{
+                    "type": "string"
+                  },
+                  "isAdmin":{
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses":{
+          "201":{
+            "description": "Criado com sucesso."
+          },
+          "422":{
+            "description":"Usuário já existe."
+          }
+        }
+      }
+    },
+    "/user/{id}":{
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Exibe dados de um usuário, dado seu email",
+        "description": "Exibe dados de um usuário, dado seu email",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "itens": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "email":{
+                        "type": "string"
+                      },
+                      "isAdmin":{
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent": {
+      "post": {
+        "security": [
+          {
+             "bearerAuth": []
+          }
+       ],
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Cadastro de agente",
+        "description": "Cria um novo registro de agente no sistema",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "workload": {
+                    "type": "number"
+                  },
+                  "presentation": {
+                    "type": "string"
+                  },
+                  "certification": {
+                    "workload": "string"
+                  },
+                  "objectives": {
+                    "type": "string"
+                  },
+                  "datasheet": {
+                    "workload": "string"
+                  },
+                  "releaseDate": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "workload": "string"
+                  },
+                  "url": {
+                    "workload": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado"
+          },
+          "422": {
+            "description": "Curso já existe."
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+             "bearerAuth": []
+          }
+       ],
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Listar todos os cursos.",
+        "description": "Lista todos os cursos no sistema",
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "itens": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "workload": {
+                        "type": "number"
+                      },
+                      "presentation": {
+                        "type": "string"
+                      },
+                      "certification": {
+                        "workload": "string"
+                      },
+                      "objectives": {
+                        "type": "string"
+                      },
+                      "datasheet": {
+                        "workload": "string"
+                      },
+                      "releaseDate": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "workload": "string"
+                      },
+                      "url": {
+                        "workload": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tutorials":{
+      "get": {
+        "security": [
+          {
+             "bearerAuth": []
+          }
+       ],
+        "tags": [
+          "Tutorials"
+        ],
+        "summary": "Exibe dados de um curso, dado seu id",
+        "description": "Exibe dados de um curso, dado seu id  ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "itens": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "email":{
+                        "type": "string"
+                      },
+                      "accepted_terms":{
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/maps":{
+      "delete": {
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Deleta uma categoria por id",
+        "description": "Deleta uma categoria por id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400":{
+            "description": "Não deletou.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    }
+  }
+
+}

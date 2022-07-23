@@ -1,0 +1,3 @@
+interface ICreateAgentClassDTO{
+  name: string;
+}

@@ -1,0 +1,138 @@
+image: "docker:latest"
+services:
+  - docker:stable-dind
+
+stages:
+  - qa
+  - build
+  - deploy
+
+variables:
+  SHORT_TAG: $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG
+  CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+  CI_APPLICATION_TAG: node-$CI_PIPELINE_IID
+  GITLAB_FEATURES: container_scanning
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  KUBECONFIG: /tmp/kconfig
+
+.def-dev: &def-dev
+  environment:
+    name: dev
+    url: https://dev-biblio.gruposaite.com.br
+  only:
+    - develop
+    - apiv2
+
+.def-prod: &def-prod
+  environment:
+    name: prod
+    url: https://biblio.gruposaite.com.br
+  only:
+    - master
+
+sqube:
+  stage: qa
+  tags:
+    - k8s
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  artifacts:
+    paths:
+      - .sonar
+    expire_in: 3 days
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=biblioteca_api
+  allow_failure: true
+  only:
+    - merge_requests
+    - master
+    - develop
+    - release-candidate
+    - apiv2
+
+build:dev:
+  <<: *def-dev
+  stage: build
+  tags:
+    - k8s
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{
+                \"username\":\"$CI_REGISTRY_USER\",
+                \"password\":\"$CI_REGISTRY_PASSWORD\"
+              }}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --cache=true
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/.docker/Dockerfile
+          --destination $SHORT_TAG
+   
+build:prod:
+  <<: *def-prod
+  stage: build
+  tags:
+    - k8s
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{
+                \"username\":\"$CI_REGISTRY_USER\",
+                \"password\":\"$CI_REGISTRY_PASSWORD\"
+              }}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --cache=true
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/.docker/Dockerfile
+          --destination $SHORT_TAG
+
+deploy:dev:
+  <<: *def-dev
+  stage: deploy
+  needs: ['build:dev']
+  tags:
+    - k8s
+  image:
+    name: registry.gitlab.com/k8s11/tools/k8s:slim
+    entrypoint: ["/bin/sh", "-c"]
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_TAG"
+    paths:
+      - public
+  before_script:
+    - echo "Deployment"
+  script:
+    - echo ${kconf} | base64 -d > ${KUBECONFIG}
+    - KUBECONFIG=${KUBECONFIG} kubectl set image -n biblio-dev
+            deploy/api api=$SHORT_TAG
+
+deploy:prod:
+  <<: *def-prod
+  stage: deploy
+  needs: ['build:prod']
+  tags:
+    - k8s
+  image:
+    name: registry.gitlab.com/k8s11/tools/k8s:slim
+    entrypoint: ["/bin/sh", "-c"]
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_TAG"
+    paths:
+      - public
+  before_script:
+    - echo "Deployment"
+  script:
+    - echo ${kconf} | base64 -d > ${KUBECONFIG}
+    - KUBECONFIG=${KUBECONFIG} kubectl set image -n biblio
+            deploy/api api=$SHORT_TAG

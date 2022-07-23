@@ -1,0 +1,50 @@
+version: '3'
+services:
+
+  db:
+    image: "postgres:14-alpine"
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+    networks:
+      - backend
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "rayanne@unasus.com"
+      PGADMIN_DEFAULT_PASSWORD: "PgUser123"
+    depends_on:
+      - db
+    networks:
+      - backend
+    ports:
+      - "18080:80"
+
+  api:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    depends_on:
+      - db
+    environment:
+      DB_HOST: "${DB_HOST}"
+      DB_PORT: "${DB_PORT}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_SYNC: "${DB_SYNC}"
+      DB_LOGGING: "${DB_LOGGING}"
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "3232:3131"
+
+networks:
+  backend:
+  frontend:
+
