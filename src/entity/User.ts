@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm"
+import { Network } from "./Network"
 
 @Entity()
 class User {
@@ -23,6 +24,12 @@ class User {
 
     @Column({default: ""})
     profileImage: string
+
+    @ManyToMany(type => Network, {eager: true})
+    @JoinTable()
+    networks: Network[]
+
+
 }
 
 export { User }

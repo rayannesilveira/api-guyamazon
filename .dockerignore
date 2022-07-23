@@ -1,5 +1,0 @@
-.docker/Dockerfile
-node_modules
-.git
-docker-compose.yml
-docs
