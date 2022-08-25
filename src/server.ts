@@ -22,7 +22,7 @@ AppDataSource.initialize().then(async () => {
 
 
   app.get("/", (request, response) => {
-    return response.send("API Valorant V.1.0");
+    return response.send("API Guyamazon V.1.0");
   });
 
 

@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Node } from "./Node"
+import { TypeData } from "./TypeData"
 
 @Entity()
 class Network {
@@ -19,6 +20,9 @@ class Network {
     @OneToMany(() => Node, (node) => node.network)
     nodes: Node[]
 
+    @ManyToMany(type => TypeData, {eager: true})
+    @JoinTable()
+    typesData: TypeData[]
 
 }
 
