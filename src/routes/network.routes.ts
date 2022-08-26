@@ -4,6 +4,7 @@ import { addTypeToNetworkController } from "../modules/network/useCases/addType"
 import { createNetworkController } from "../modules/network/useCases/createNetwork";
 import { getAllNetworkController } from "../modules/network/useCases/getAllNetwork";
 import { getNetworkByIdController } from "../modules/network/useCases/getByIdNetwork";
+import { getAllNodeByNetworkIdController } from "../modules/node/useCases/getAllNodeByNetworkId";
 
 
 const networkRoutes = Router();
@@ -15,6 +16,11 @@ networkRoutes.get("/", (request, response) => {
 networkRoutes.get("/:id", (request, response) => {
   return getNetworkByIdController.handle(request, response);
 });
+
+networkRoutes.get("/:id/nodes", (request, response) => {
+  return getAllNodeByNetworkIdController.handle(request, response);
+});
+
 
 networkRoutes.use(isAuthenticated);
 networkRoutes.get("/:id/type/:idType", (request, response) => {

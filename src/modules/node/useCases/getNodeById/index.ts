@@ -5,6 +5,6 @@ import { GetNodeByIdController } from "./GetNodeByIdController";
 
 const nodeRepository = new NodeRepository;
 const getByIdNodeService = new GetNodeByIdService(nodeRepository);
-const getByIdEducationalObjectController = new GetNodeByIdController(getByIdNodeService);
+const getNodeByIdController = new GetNodeByIdController(getByIdNodeService);
 
-export { getByIdEducationalObjectController };
+export { getNodeByIdController };
