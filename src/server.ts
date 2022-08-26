@@ -8,6 +8,7 @@ import { authRoutes } from "./routes/auth.routes";
 import { typeDataRoutes } from "./routes/typedata.routes";
 import { networkRoutes } from "./routes/network.routes";
 import { nodeRoutes } from "./routes/node.routes";
+import { collectedDataRoutes } from "./routes/collecteddata.routes";
 
 const app = express();
 
@@ -21,6 +22,7 @@ AppDataSource.initialize().then(async () => {
   app.use("/user", usersRoutes);
   app.use("/network", networkRoutes);
   app.use("/node", nodeRoutes);
+  app.use("/collected-data", collectedDataRoutes);
   app.use("/login", authRoutes);
   app.use("/type-data", typeDataRoutes);
 

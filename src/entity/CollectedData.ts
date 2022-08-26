@@ -15,7 +15,7 @@ class CollectedData {
     created_at!: string
 
     @Column()
-    typeId!: number
+    typeDataId!: number
 
     @ManyToOne(type => TypeData, typeData => typeData.collectedData)
     typeData: TypeData
