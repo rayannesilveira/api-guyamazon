@@ -27,6 +27,14 @@ class CollectedDataRepository implements ICollectedDataRepository{
     
 
   }
+
+  async getAllData(): Promise<CollectedData[]>{
+
+    const data = await this.repository.find({});
+
+    return data;
+
+  }
   
  
 }
