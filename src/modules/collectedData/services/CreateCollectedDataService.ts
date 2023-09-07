@@ -4,6 +4,7 @@ interface IRequest {
   value: string;
   typeDataId: number;
   nodeId: number;
+  typeDataName: string;
 }
 
 class CreateCollectedDataService {

@@ -17,6 +17,9 @@ class CollectedData {
     @Column()
     typeDataId!: number
 
+    @Column()
+    typeDataName!: string
+
     @ManyToOne(type => TypeData, typeData => typeData.collectedData)
     typeData: TypeData
 
